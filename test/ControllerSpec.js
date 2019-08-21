@@ -133,6 +133,29 @@ describe('controller', function () {
 
             expect(view.render).toHaveBeenCalledWith('showEntries', todo);
 		});
+
+		it('should call model to read active entries', function() {
+            var todo = [{
+                id: 1,
+                title: 'Todo 1',
+                completed: false
+            }, {
+                id: 2,
+                title: 'Todo 2',
+                completed: true
+            }];
+            setUpModel(todo);
+
+            subject.setView('#/active');
+
+            expect(model.read).toHaveBeenCalledWith({
+                completed: false
+            }, jasmine.any(Function));
+
+            expect(model.read).not.toHaveBeenCalledWith({
+                completed: true
+            }, jasmine.any(Function));
+        });
 	});
 
 	it('should show the content block when todos exists', function () {
@@ -216,6 +239,31 @@ describe('controller', function () {
             completed: true
         }, jasmine.any(Function));
 	});
+
+	it('should highlight "Completed" filter when switching to completed view', function() {
+        var todo = [{
+            id: 1,
+            title: 'Todo 1',
+            completed: false
+        }, {
+            id: 2,
+            title: 'Todo 2',
+            completed: true
+        }];
+        setUpModel([todo]);
+
+        subject.setView('#/completed');
+
+        expect(view.render).toHaveBeenCalledWith('setFilter', 'completed');
+
+        expect(model.read).toHaveBeenCalledWith({
+            completed: true
+        }, jasmine.any(Function));
+
+        expect(model.read).not.toHaveBeenCalledWith({
+            completed: false
+        }, jasmine.any(Function));
+    });
 
 	describe('toggle all', function () {
 		it('should toggle all todos to completed', function () {
